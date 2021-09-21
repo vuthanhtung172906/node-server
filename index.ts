@@ -1,5 +1,5 @@
 import cookieParser from 'cookie-parser';
-
+import herokuAwake from 'heroku-awake';
 import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -31,5 +31,6 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
+  herokuAwake('https://vtt-nodejs.herokuapp.com/');
   console.log('Server is running on PORT', PORT);
 });
