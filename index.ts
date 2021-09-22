@@ -2,7 +2,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
-import http from 'http';
+import http from 'https';
 import express from 'express';
 import morgan from 'morgan';
 /// Database
@@ -28,10 +28,9 @@ app.get('/', (req, res) => {
 // Server listening
 
 const PORT = process.env.PORT || 5000;
-
+setInterval(() => {
+  http.get('https://vtt-nodejs.herokuapp.com/');
+}, 300000);
 app.listen(PORT, () => {
-  setInterval(() => {
-    http.get('https://vtt-nodejs.herokuapp.com/');
-  }, 300000);
   console.log('Server is running on PORT', PORT);
 });
