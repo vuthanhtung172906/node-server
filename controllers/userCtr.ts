@@ -81,6 +81,7 @@ const useCtr = {
   refreshToken: async (req: Request, res: Response) => {
     try {
       const rf_token = req.cookies.refreshtoken;
+      console.log({ rf_token });
       if (!rf_token) return res.status(400).json({ msg: 'Please login now!' });
       const decode = jwt.verify(rf_token, `${process.env.REFRESH_TOKEN_SECRET}`) as IDecodedToken;
       if (!decode.id) return res.status(400).json({ msg: 'Please login' });
@@ -88,7 +89,7 @@ const useCtr = {
       if (!user) return res.status(400).json({ msg: 'Account not exist' });
 
       const access_token = generateAccessToken({ id: user.id });
-      res.json({ access_token });
+      res.json({ access_token, user });
     } catch (error) {
       return res.status(500).json({ msg: (error as Error).message });
     }
