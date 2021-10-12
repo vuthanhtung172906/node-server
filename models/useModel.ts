@@ -23,13 +23,15 @@ const userSchema = new Schema(
       default: 'user',
     },
     avatar: {
-      type: String,
-      default:
-        'https://res.cloudinary.com/tungvuthanh20172906/image/upload/v1629169689/user/rgjzatwvrzfrqjpmz7po.jpg',
+      type: Object,
+      default: {
+        public_id: 'nextjsapp/axop8adonhtwyamqibyw',
+        url: 'https://res.cloudinary.com/tungvuthanh20172906/image/upload/v1633445875/nextjsapp/axop8adonhtwyamqibyw.jpg',
+      },
     },
-    type: {
-      type: String,
-      default: 'register',
+    order: {
+      type: Array,
+      default: [],
     },
   },
   {

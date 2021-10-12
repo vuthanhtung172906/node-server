@@ -13,11 +13,12 @@ const CLIENT_URL = `${process.env.BASE_URL}`;
 const useCtr = {
   register: async (req: Request, res: Response) => {
     try {
-      const { name, email, password } = req.body;
+      const { username, email, password } = req.body;
       const user = await Users.findOne({ email });
       if (user) return res.status(400).json({ msg: 'Email already register' });
       const passwordHash = await hash(password, 12);
-      const newUser = { name, email, password: passwordHash };
+      const newUser = { name: username, email, password: passwordHash };
+      console.log({ newUser });
       const active_token = generateActiveToken({ newUser });
       const url = `${CLIENT_URL}/active/${active_token}`;
       sendEmail(email, url, 'Verify your email');
@@ -29,12 +30,11 @@ const useCtr = {
   },
   activeAccount: async (req: Request, res: Response) => {
     try {
-      const { active_token } = req.body;
-      const decode = jwt.verify(
-        active_token,
-        `${process.env.ACTIVE_TOKEN_SECRET}`
-      ) as IDecodedToken;
+      console.log(req.body);
+      const { activetoken } = req.body;
+      const decode = jwt.verify(activetoken, `${process.env.ACTIVE_TOKEN_SECRET}`) as IDecodedToken;
       const { newUser } = decode;
+      console.log(decode);
       if (!newUser) return res.status(400).json({ msg: 'Invalid Autehntication' });
       const user = new Users(newUser);
       await user.save();
@@ -72,7 +72,11 @@ const useCtr = {
   },
   logout: async (req: Request, res: Response) => {
     try {
-      res.clearCookie('refreshtoken', { path: '/api/refreshtoken' });
+      res.clearCookie('refreshtoken', {
+        path: '/api/refreshtoken',
+        domain: 'localhost',
+      });
+      console.log('log out success');
       return res.json({ msg: 'Log out success' });
     } catch (error) {
       return res.status(500).json({ msg: (error as Error).message });
@@ -84,12 +88,34 @@ const useCtr = {
       console.log({ rf_token });
       if (!rf_token) return res.status(400).json({ msg: 'Please login now!' });
       const decode = jwt.verify(rf_token, `${process.env.REFRESH_TOKEN_SECRET}`) as IDecodedToken;
-      if (!decode.id) return res.status(400).json({ msg: 'Please login' });
+      if (!decode.id) return res.status(400).json({ msg: 'Invalid Token' });
       const user = await Users.findById(decode.id).select('-password');
       if (!user) return res.status(400).json({ msg: 'Account not exist' });
 
       const access_token = generateAccessToken({ id: user.id });
       res.json({ access_token, user });
+    } catch (error) {
+      return res.status(500).json({ msg: (error as Error).message });
+    }
+  },
+  changeInfoUser: async (req: any, res: Response) => {
+    try {
+      const { avatar, username, password } = req.body;
+      console.log(req.body);
+      if (password !== '') {
+        const passwordHash = await hash(password, 12);
+        await Users.findByIdAndUpdate(req.user._id, {
+          password: passwordHash,
+          name: username,
+          avatar: avatar,
+        });
+      } else {
+        await Users.findByIdAndUpdate(req.user._id, {
+          name: username,
+          avatar: avatar,
+        });
+      }
+      res.status(200).json({ msg: 'Change profile success !' });
     } catch (error) {
       return res.status(500).json({ msg: (error as Error).message });
     }

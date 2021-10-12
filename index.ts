@@ -7,20 +7,28 @@ import express from 'express';
 import morgan from 'morgan';
 /// Database
 import routes from './routes';
-
+import fileUpload from 'express-fileupload';
 //Middlewares
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors());
+app.use(cors({ credentials: true, origin: `${process.env.BASE_URL}` }));
 app.use(morgan('dev'));
 app.use(cookieParser());
+app.use(
+  fileUpload({
+    useTempFiles: true,
+  })
+);
 import './config/database';
 
 // Routes
 app.use('/api', routes.useRoute);
-
+app.use('/api', routes.uploadRoute);
+app.use('/cate', routes.cateRoute);
+app.use('/product', routes.productRoute);
+app.use('/payment', routes.paymentRoute);
 app.get('/', (req, res) => {
   res.json({ msg: 'main page' });
 });
