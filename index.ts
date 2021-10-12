@@ -13,7 +13,9 @@ import fileUpload from 'express-fileupload';
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors({ credentials: true, origin: `${process.env.BASE_URL}` }));
+app.use(
+  cors({ credentials: true, origin: [`${process.env.BASE_URL}`, `${process.env.PRODUCTION_URL}`] })
+);
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(
