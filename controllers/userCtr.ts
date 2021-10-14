@@ -62,6 +62,7 @@ const useCtr = {
         path: '/api/refreshtoken',
         maxAge: 7 * 24 * 60 * 60 * 1000,
         sameSite: 'none',
+        secure: false,
       });
       res.json({
         msg: 'Login Success',
@@ -145,6 +146,7 @@ const useCtr = {
           path: '/api/refreshtoken',
           maxAge: 7 * 24 * 60 * 60 * 1000,
           sameSite: 'none',
+          secure: false,
         });
         res.json({
           msg: 'Login Success',
@@ -173,6 +175,7 @@ const useCtr = {
           path: '/api/refreshtoken',
           maxAge: 7 * 24 * 60 * 60 * 1000,
           sameSite: 'none',
+          secure: false,
         });
         res.json({
           msg: 'Login Success',
