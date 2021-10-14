@@ -78,7 +78,6 @@ const useCtr = {
     try {
       res.clearCookie('refreshtoken', {
         path: '/api/refreshtoken',
-        domain: 'localhost',
       });
       console.log('log out success');
       return res.json({ msg: 'Log out success' });
@@ -136,8 +135,6 @@ const useCtr = {
       if (!email_verified) return res.status(400).json({ msg: 'Email verification failed.' });
       const user = await Users.findOne({ email });
       if (user) {
-        const isMatch = await compare(email as string, user.password);
-        if (!isMatch) return res.status(400).json({ msg: 'Password is incorrect.' });
         const access_token = generateAccessToken({ id: user._id });
         const refresh_token = generateRefreshToken({ id: user._id });
 
